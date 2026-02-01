@@ -27,11 +27,9 @@ def fetch_recent_papers(domain="arxiv.org", days=7, max_results=10):
     if domain == "arxiv.org":
         base = "https://export.arxiv.org/api/query"
         params = {
-            "search_query": "all:",
+            "search_query": "all",
             "start": 0,
             "max_results": max_results,
-            "sortBy": "submittedDate",
-            "sortOrder": "descending",
         }
         resp = requests.get(base, params=params)
         resp.raise_for_status()
@@ -87,10 +85,10 @@ def detect_patterns(papers):
     return patterns
 
 def main():
-    print("🔬 Scanning recent open-access research…")
+    print("Scanning recent open-access research...")
     papers = fetch_recent_papers(domain="arxiv.org", days=7, max_results=15)
     patterns = detect_patterns(papers)
-    print("\n⚡ Cross-Disciplinary Breakthrough Hints:")
+    print("\nCross-Disciplinary Breakthrough Hints:")
     for i, pat in enumerate(patterns, 1):
         print(f"\n{i}. {pat['pattern']}")
         print(f"   Hint: {pat['hint']}")
