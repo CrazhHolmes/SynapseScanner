@@ -1,18 +1,18 @@
-# Physics Idea Generator
+# Universal Research Scanner & Reality-Breaker
 
-*Open-access physics paper scraper → low-cost experiment suggestions*
+*Open-access paper scraper → breakthrough experiment ideas*
 
 **What it does**
-- Scrapes arXiv, NASA, DOE, CERN (open-access only)
-- Summarizes new findings
-- Suggests concrete, low-cost experiments you can build
-- No hardware, no budget claims – just text → ideas
+- Scrapes **ALL** open-access research (physics, quantum, bio, chem, AI, etc.)
+- Detects cross-disciplinary patterns
+- Suggests **concrete, low-cost experiments** to test breakthrough ideas
+- No hardware, no budget claims – just **text → ideas → reality hacks**
 
 **Quick start**
 ```bash
-git clone https://github.com/CrazhHolmes/PhysicsIdeaGenerator.git
-cd PhysicsIdeaGenerator/src
-python physics_ideas.py
+git clone https://github.com/CrazhHolmes/UniversalResearchScanner.git
+cd UniversalResearchScanner
+python universal_scanner.py
 ```
 
 **License**
