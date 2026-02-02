@@ -153,6 +153,29 @@ _ICONS = {
     "AI physics":           "◆",
 }
 
+_EXPLANATIONS = {
+    "Quantum breakthrough": (
+        "Quantum erasure can be demonstrated with inexpensive optical"
+        " components, opening a low-cost pathway for teaching advanced"
+        " quantum-mechanics experiments in undergraduate labs."
+    ),
+    "Metamaterial lens": (
+        "Stacking everyday glass slides with index-matching oil recreates"
+        " the negative-refraction effect normally seen only in engineered"
+        " nanostructures, making metamaterial optics accessible on a bench."
+    ),
+    "Temporal periodicity": (
+        "A simple 555-timer circuit can produce the same discrete time-"
+        "symmetry breaking that underpins time-crystal research, giving"
+        " students a hands-on analogy for cutting-edge condensed-matter physics."
+    ),
+    "AI physics": (
+        "Training a small neural network on pendulum data shows how machine"
+        " learning can rediscover Newtonian mechanics from raw observations,"
+        " illustrating physics-informed ML with zero hardware cost."
+    ),
+}
+
 def show_results(patterns):
     seen, unique = set(), []
     for p in patterns:
@@ -172,16 +195,35 @@ def show_results(patterns):
     hdr   = " Discoveries "
     hline = "─" * 2 + hdr + "─" * max(0, w - 4 - len(hdr))
 
-    lines = [f"\n  {bdr}┌{hline}┐{RESET}"]
+    lines = [f"\n  {bdr}╭{hline}╮{RESET}"]
     for p in unique:
         icon = _ICONS.get(p["pattern"], "●")
         lines.append(f"  {bdr}│{RESET}  {BOLD}{icon}  {p['pattern']}{RESET}")
         lines.append(f"  {bdr}│{RESET}     {DIM}{p['hint']}{RESET}")
         lines.append(f"  {bdr}│{RESET}     {DIM}{p['cost']} · {p['difficulty']}{RESET}")
         lines.append(f"  {bdr}│{RESET}")
-    lines.append(f"  {bdr}└{'─' * (w - 2)}┘{RESET}")
+    lines.append(f"  {bdr}╰{'─' * (w - 2)}╯{RESET}")
 
     sys.stdout.write("\n".join(lines) + "\n")
+
+    # Explanation paragraph for each discovery
+    for p in unique:
+        explanation = _EXPLANATIONS.get(p["pattern"])
+        if explanation:
+            icon = _ICONS.get(p["pattern"], "●")
+            sys.stdout.write(f"\n  {BOLD}{icon}  {p['pattern']}{RESET}\n")
+            # Word-wrap the explanation to fit the terminal
+            max_w = min(cols - 6, 72)
+            words = explanation.split()
+            line = "  "
+            for word in words:
+                if len(line) + len(word) + 1 > max_w:
+                    sys.stdout.write(f"  {DIM}{line}{RESET}\n")
+                    line = "  "
+                line += (" " if len(line) > 2 else "") + word
+            if line.strip():
+                sys.stdout.write(f"  {DIM}{line}{RESET}\n")
+
     sys.stdout.flush()
 
 

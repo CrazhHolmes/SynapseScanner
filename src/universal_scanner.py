@@ -26,7 +26,7 @@ WHITELIST = [
     "phys.org", "scitechdaily.com",
 ]
 
-REPO_URL = "https://github.com/CrazhHolmes/UniversalResearchScanner"
+REPO_URL = "https://github.com/CrazhHolmes/SynapseScanner"
 
 
 def fetch_recent_papers(domain="arxiv.org", days=7, max_results=10):
