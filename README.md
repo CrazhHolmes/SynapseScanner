@@ -43,7 +43,13 @@ SynapseScanner fetches recent papers from arXiv (with more sources planned), sca
 
 ## Installation
 
-**From source (recommended):**
+**From PyPI (when published):**
+
+```bash
+pip install synapsescanner
+```
+
+**From source:**
 
 ```bash
 git clone https://github.com/CrazhHolmes/SynapseScanner.git
@@ -57,7 +63,7 @@ pip install .
 git clone https://github.com/CrazhHolmes/SynapseScanner.git
 cd SynapseScanner
 pip install -r synapsescanner/requirements.txt
-python -m synapsescanner.universal_scanner
+python -m synapsescanner.universal_scanner "your query"
 ```
 
 ## Quick start
@@ -142,32 +148,35 @@ bioRxiv, chemRxiv, medRxiv, OSF, Zenodo, NASA Technical Reports, OSTI, CERN, AIP
 
 ## Windows / PowerShell shortcut
 
-Add this function to your PowerShell `$PROFILE` for a shorter command:
+Add this function to your PowerShell `$PROFILE` for a shorter `synapse` command:
 
 ```powershell
 function synapse {
     param(
+        [Parameter(Position=0)][string]$Query,
         [int]$MaxResults = 15,
         [switch]$Matrix,
         [switch]$Noir,
         [switch]$Cheat
     )
-    $flags = @("--max-results", $MaxResults)
-    if ($Matrix) { $flags += "--matrix" }
-    if ($Noir) { $flags += "--noir" }
-    if ($Cheat) { $flags += "--cheat" }
-    python -m synapsescanner.universal_scanner @flags
+    $argsList = @()
+    if ($Query) { $argsList += $Query }
+    if ($MaxResults -ne 15) { $argsList += "--max-results"; $argsList += $MaxResults }
+    if ($Matrix) { $argsList += "--matrix" }
+    if ($Noir) { $argsList += "--noir" }
+    if ($Cheat) { $argsList += "--cheat" }
+    python -m synapsescanner.universal_scanner @argsList
 }
 ```
 
 Then run:
 
 ```powershell
-synapse                          # default scan
-synapse -MaxResults 5            # quick scan
-synapse -Matrix                  # matrix rain
-synapse -Noir                    # greyscale
-synapse -Cheat                   # reference card
+synapse "quantum entanglement"           # search
+synapse "CRISPR" -MaxResults 5           # limit results
+synapse "neural networks" -Noir          # greyscale
+synapse -Matrix                          # matrix rain
+synapse -Cheat                           # reference card
 ```
 
 ## CMD shortcut (batch file)
@@ -182,17 +191,71 @@ python -m synapsescanner.universal_scanner %*
 Then run:
 
 ```cmd
-synapse --max-results 5
-synapse --matrix
+synapse "quantum entanglement"
+synapse "CRISPR" --max-results 5
 ```
 
 ## Contributing
 
-- Add new data sources by extending `fetch_recent_papers()` in `synapsescanner/universal_scanner.py`
-- Add new pattern categories in `detect_patterns()` with matching entries in `_ICONS` and `_EXPLANATIONS` in `synapsescanner/cli_extras.py`
-- The open-access source whitelist is in `WHITELIST` in `synapsescanner/universal_scanner.py`
+We welcome contributions! Here's how to extend SynapseScanner:
 
-PRs welcome.
+### Add a new data source
+
+1. Open `synapsescanner/universal_scanner.py`
+2. Add the domain to the `WHITELIST` array:
+   ```python
+   WHITELIST = [
+       "arxiv.org", "biorxiv.org", ...,
+       "your-new-source.org",  # add here
+   ]
+   ```
+3. Extend `fetch_recent_papers()` to handle the new domain's API:
+   ```python
+   def fetch_recent_papers(domain="arxiv.org", query=None, ...):
+       ...
+       elif domain == "your-new-source.org":
+           # Add API fetching logic here
+           pass
+   ```
+
+### Add a new discovery pattern
+
+1. Open `synapsescanner/universal_scanner.py`
+2. Add detection logic in `detect_patterns()`:
+   ```python
+   if any(kw in txt for kw in ["keyword1", "keyword2"]):
+       patterns.append({
+           "pattern": "Your Pattern Name",
+           "hint": "Suggested experiment description",
+           "cost": "~$X", "difficulty": "Easy/Medium/Research",
+       })
+   ```
+3. Open `synapsescanner/cli_extras.py`
+4. Add an icon to `_ICONS`:
+   ```python
+   _ICONS = {
+       ...,
+       "Your Pattern Name": "🔬",  # pick a Unicode symbol
+   }
+   ```
+5. Add an explanation to `_EXPLANATIONS`:
+   ```python
+   _EXPLANATIONS = {
+       ...,
+       "Your Pattern Name": (
+           "A paragraph explaining why this pattern matters "
+           "and what the suggested experiment demonstrates."
+       ),
+   }
+   ```
+
+### Code style
+
+- Run `flake8 synapsescanner/` before submitting
+- Keep functions focused and well-documented
+- Test on Windows (for encoding issues) if possible
+
+PRs welcome!
 
 ## Requirements
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [v1.2.0] -- 2026-02-02
+
+### Added
+- **Search query support**: `synapsescanner "quantum entanglement"` now searches arXiv
+- Expanded Contributing section in README with step-by-step guides for adding data sources and patterns
+- USAGE.md with comprehensive examples
+- PyPI installation instructions in README
+
+### Changed
+- Updated `--cheat` output with usage examples
+- PowerShell function now supports query argument
+- synapse.bat includes helpful comments
+
 ## [v1.1.2] -- 2026-02-02
 
 ### Fixed
