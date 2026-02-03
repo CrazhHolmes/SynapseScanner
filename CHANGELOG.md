@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.1.2] -- 2026-02-02
+
+### Fixed
+- CI: flake8 alignment-spacing rules (E221, E241, E302, E305) now ignored
+- Release workflow: removed unused `id-token` permission that blocked job start
+
 ## [v1.1.1] -- 2026-02-02
 
 ### Fixed
