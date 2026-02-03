@@ -1,0 +1,75 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write      # needed for PyPI trusted publishing
+      contents: write      # needed for GitHub release
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install build tools
+        run: pip install build
+      - name: Build wheel
+        run: python -m build -w src/
+      - name: Publish to PyPI
+        if: ${{ secrets.PYPI_API_TOKEN != '' }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: src/dist
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+
+  announce:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version from tag
+        id: meta
+        run: echo "VERSION=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+
+      - name: Tweet release
+        if: ${{ secrets.TWITTER_BEARER_TOKEN != '' }}
+        env:
+          BEARER: ${{ secrets.TWITTER_BEARER_TOKEN }}
+          VERSION: ${{ steps.meta.outputs.VERSION }}
+        run: |
+          TEXT="SynapseScanner ${VERSION} is live!\nA clean CLI for scraping arXiv, bioRxiv, Zenodo with clickable links and Braille sparklines.\nhttps://github.com/CrazhHolmes/SynapseScanner/releases/tag/${VERSION}\n#Python #OpenScience #CLI"
+          curl -s -X POST "https://api.twitter.com/2/tweets" \
+               -H "Authorization: Bearer $BEARER" \
+               -H "Content-Type: application/json" \
+               -d "{\"text\":\"$TEXT\"}"
+
+      - name: Publish dev.to draft
+        if: ${{ secrets.DEVTO_API_KEY != '' }}
+        env:
+          DEVTO: ${{ secrets.DEVTO_API_KEY }}
+          VERSION: ${{ steps.meta.outputs.VERSION }}
+        run: |
+          cat <<'ARTICLE' > article.json
+          {
+            "article": {
+              "title": "SynapseScanner – A sleek CLI for open-access research",
+              "published": false,
+              "body_markdown": "## What it does\n\nSynapseScanner scrapes arXiv, bioRxiv, Zenodo and 20+ open-access sources, then detects cross-disciplinary breakthrough patterns.\n\n### Unique CLI tricks\n- **OSC 8 clickable hyperlinks** — paper URLs open in your browser from the terminal\n- **24-bit true-color gradients** — smooth cyan-to-purple banner\n- **Braille sparklines** — compact keyword frequency bars\n\nTry it: `pip install synapsescanner` or clone from [GitHub](https://github.com/CrazhHolmes/SynapseScanner)\n",
+              "tags": ["python", "cli", "opensource", "research"]
+            }
+          }
+          ARTICLE
+          curl -s -X POST https://dev.to/api/articles \
+               -H "api-key: $DEVTO" \
+               -H "Content-Type: application/json" \
+               -d @article.json

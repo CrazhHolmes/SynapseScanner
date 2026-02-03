@@ -17,9 +17,10 @@ import shutil
 import time
 import random
 
-# ── Enable ANSI escapes on Windows ──
+# ── Enable ANSI escapes and UTF-8 output on Windows ──
 if os.name == "nt":
-    os.system("")
+    os.system("")                           # enable VT processing
+    sys.stdout.reconfigure(encoding="utf-8")  # box-drawing & braille need UTF-8
 
 # ── ANSI primitives ──
 RESET    = "\033[0m"
