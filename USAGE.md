@@ -1,98 +1,84 @@
 # SynapseScanner Usage Guide
 
-## Current behavior
-
-SynapseScanner fetches **recent papers from arXiv** and scans them for cross-disciplinary patterns. It does not currently accept a search query — it analyzes whatever recent papers the arXiv API returns.
-
----
-
-## Running from the repo folder
-
-### Windows CMD
-
-```cmd
-cd C:\Users\bings\SynapseScanner
-.\synapse.bat
-.\synapse.bat --max-results 5
-.\synapse.bat --noir
-.\synapse.bat --matrix
-.\synapse.bat --cheat
-```
-
-### PowerShell
-
-```powershell
-cd C:\Users\bings\SynapseScanner
-.\synapse.bat --max-results 5
-.\synapse.bat --noir --matrix
-```
-
-### Direct Python (any terminal)
+## Quick examples
 
 ```bash
-cd C:\Users\bings\SynapseScanner
-python -m synapsescanner.universal_scanner
-python -m synapsescanner.universal_scanner --max-results 5
-python -m synapsescanner.universal_scanner --noir
-python -m synapsescanner.universal_scanner --matrix
-python -m synapsescanner.universal_scanner --cheat
-```
+# Search for a topic
+synapsescanner "quantum entanglement"
 
----
+# Limit results
+synapsescanner "CRISPR" --max-results 5
 
-## After installing (`pip install .`)
-
-```bash
+# Fetch recent papers (no query)
 synapsescanner
-synapsescanner --max-results 10
-synapsescanner --noir
-synapsescanner --matrix
+
+# Greyscale mode
+synapsescanner "neural networks" --noir
+
+# Matrix rain easter egg
+synapsescanner "graph theory" --matrix
+
+# Show help
 synapsescanner --cheat
 ```
 
 ---
 
-## PowerShell shortcut function
+## Three ways to run
 
-Add this to your PowerShell profile (`notepad $PROFILE`) for a shorter `synapse` command:
+### 1. Installed command (recommended)
 
-```powershell
-function synapse {
-    param(
-        [int]$MaxResults = 15,
-        [switch]$Matrix,
-        [switch]$Noir,
-        [switch]$Cheat
-    )
-    $flags = @()
-    if ($MaxResults -ne 15) { $flags += "--max-results"; $flags += $MaxResults }
-    if ($Matrix) { $flags += "--matrix" }
-    if ($Noir) { $flags += "--noir" }
-    if ($Cheat) { $flags += "--cheat" }
-    python -m synapsescanner.universal_scanner @flags
-}
+After `pip install .` from the repo folder:
+
+```bash
+synapsescanner "quantum entanglement"
+synapsescanner "CRISPR" --max-results 5
+synapsescanner --noir
 ```
 
-Then use:
+### 2. Windows batch file
 
-```powershell
-synapse                    # default (15 papers)
-synapse -MaxResults 5      # quick scan
-synapse -Matrix            # matrix rain easter egg
-synapse -Noir              # greyscale mode
-synapse -Cheat             # CLI reference card
+From the repo folder:
+
+```cmd
+cd C:\Users\bings\SynapseScanner
+.\synapse.bat "quantum entanglement"
+.\synapse.bat "CRISPR" --max-results 5
+.\synapse.bat --cheat
+```
+
+### 3. Direct Python
+
+```bash
+python -m synapsescanner.universal_scanner "quantum entanglement"
+python -m synapsescanner.universal_scanner "graph neural networks" --max-results 5
+python -m synapsescanner.universal_scanner --noir
 ```
 
 ---
 
-## Available flags
+## PowerShell shortcut
 
-| Flag | Effect |
-|------|--------|
+The `synapse` function is installed in your PowerShell profile. Usage:
+
+```powershell
+synapse "quantum entanglement"
+synapse "CRISPR" -MaxResults 5
+synapse "neural networks" -Noir
+synapse -Cheat
+```
+
+---
+
+## All options
+
+| Option | Description |
+|--------|-------------|
+| `[query]` | Search term (optional, fetches recent papers if omitted) |
 | `--max-results N` | Number of papers to fetch (default: 15) |
 | `--noir` | Greyscale mode |
 | `--matrix` | Matrix rain easter egg |
-| `--cheat` | Show CLI reference card |
+| `--cheat` | Show CLI reference |
 
 ## Environment variables
 
@@ -100,9 +86,3 @@ synapse -Cheat             # CLI reference card
 |----------|--------|
 | `SYNAPSE_MATRIX=1` | Same as `--matrix` |
 | `SYNAPSE_NOIR=1` | Same as `--noir` |
-
----
-
-## Note on search queries
-
-The current version does **not** support search queries. It fetches recent papers from arXiv's "all" category. Query-based search is planned for a future release.

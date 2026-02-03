@@ -36,14 +36,26 @@ WHITELIST = [
 REPO_URL = "https://github.com/CrazhHolmes/SynapseScanner"
 
 
-def fetch_recent_papers(domain="arxiv.org", days=7, max_results=10):
-    """Fetch recent open-access papers from a domain."""
+def fetch_recent_papers(domain="arxiv.org", query=None, days=7, max_results=10):
+    """Fetch recent open-access papers from a domain.
+
+    Args:
+        domain: Source domain (currently only arxiv.org supported)
+        query: Search query string (optional, searches all fields)
+        days: Not used yet (for future date filtering)
+        max_results: Maximum number of papers to fetch
+    """
     papers = []
     if domain == "arxiv.org":
         import xml.etree.ElementTree as ET
+        # Build search query: use provided query or fetch all recent
+        if query:
+            search_query = f"all:{query}"
+        else:
+            search_query = "all"
         resp = requests.get(
             "https://export.arxiv.org/api/query",
-            params={"search_query": "all", "start": 0, "max_results": max_results},
+            params={"search_query": search_query, "start": 0, "max_results": max_results},
         )
         resp.raise_for_status()
         ns = {"atom": "http://www.w3.org/2005/Atom"}
@@ -111,6 +123,8 @@ def main():
     parser = argparse.ArgumentParser(
         description="SynapseScanner - Quantum Research Intelligence",
     )
+    parser.add_argument("query", nargs="?", default=None,
+                        help="Search query (optional, fetches recent papers if omitted)")
     parser.add_argument("--matrix", action="store_true",
                         help="Matrix rain easter egg")
     parser.add_argument("--cheat", action="store_true",
@@ -136,9 +150,12 @@ def main():
     hide_cursor()
     try:
         # ── Fetch ──
-        show_status("Fetching papers from arxiv.org...")
+        if args.query:
+            show_status(f"Searching arxiv.org for '{args.query}'...")
+        else:
+            show_status("Fetching recent papers from arxiv.org...")
         t0 = time.time()
-        papers = fetch_recent_papers("arxiv.org", days=7,
+        papers = fetch_recent_papers("arxiv.org", query=args.query, days=7,
                                      max_results=args.max_results)
         if not papers:
             show_status("No papers returned from API.", "wrn", done=True)

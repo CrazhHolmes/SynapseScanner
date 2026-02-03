@@ -280,7 +280,15 @@ def show_cheat():
     print(f"""
   {BOLD}SynapseScanner CLI{RESET}
 
-  {DIM}FLAGS{RESET}
+  {DIM}USAGE{RESET}
+    synapsescanner [QUERY] [OPTIONS]
+
+  {DIM}EXAMPLES{RESET}
+    synapsescanner                        Fetch recent papers
+    synapsescanner "quantum entanglement" Search for a topic
+    synapsescanner "CRISPR" --max-results 5
+
+  {DIM}OPTIONS{RESET}
     --max-results N   Papers to fetch (default 15)
     --noir            Greyscale mode
     --matrix          Matrix rain easter egg

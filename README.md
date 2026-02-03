@@ -63,14 +63,17 @@ python -m synapsescanner.universal_scanner
 ## Quick start
 
 ```bash
-# Default: fetch 15 recent papers from arXiv
+# Search for a topic
+synapsescanner "quantum entanglement"
+
+# Limit results
+synapsescanner "CRISPR" --max-results 5
+
+# Fetch recent papers (no query)
 synapsescanner
 
-# Fetch fewer papers for a quick scan
-synapsescanner --max-results 5
-
 # Greyscale theme
-synapsescanner --noir
+synapsescanner "neural networks" --noir
 
 # Matrix rain easter egg
 synapsescanner --matrix
@@ -82,7 +85,7 @@ synapsescanner --cheat
 ## Full usage
 
 ```
-synapsescanner [--max-results N] [--noir] [--matrix] [--cheat]
+synapsescanner [QUERY] [--max-results N] [--noir] [--matrix] [--cheat]
 ```
 
 | Flag | Effect |
